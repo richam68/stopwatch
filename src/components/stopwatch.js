@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 
 function Stopwatch() {
+  const [currentState, setCurrentState] = useState('')
   const [time, setTime] = useState(0);
   const [hide, setHide] = useState(false);
   const ref = useRef();
@@ -22,7 +23,9 @@ function Stopwatch() {
 
   const startButtom = () => {
     setHide(true);
-
+    if(currentState === "START"){
+        setCurrentState("START")
+    }
     ref.current = setInterval(() => {
       setTime((prev) => prev + 1000);
     }, 1000);
@@ -30,10 +33,14 @@ function Stopwatch() {
 
   const stopButton = () => {
     setHide(false);
+    if(currentState === "STOP"){
+        setCurrentState("STOP")
+    }
     clearInterval(ref.current);
   };
 
   const resetButton = () => {
+    if(currentState === "RESET") return
     setTime(0);
   };
   
@@ -42,7 +49,7 @@ function Stopwatch() {
       <h2>Stop Watch</h2>
 
       <h3>
-        Time: {minutes}:{seconds}
+        Time:<span>{minutes}</span>:<span>{seconds}</span>
       </h3>
       {hide ? (
         <button onClick={stopButton} style={{ backgroundColor: "#fdc57b" }}>
