@@ -1,65 +1,47 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 function Stopwatch() {
-  const [currentState, setCurrentState] = useState('')
   const [time, setTime] = useState(0);
-  const [hide, setHide] = useState(false);
-  const ref = useRef();
-
-  let sec = Math.floor(time / 1000);
-  let min = Math.floor(sec / 60);
-  //let hour = Math.floor(min / 60);
-
-  let seconds = (sec % 60).toString().padStart(2, "0");
-  let minutes = (min % 60).toString().padStart(2, "0");
-  //   let hours = (hour % 24).toString().padStart(2, "0");
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
+    let id;
+    if (isActive) {
+      id = setInterval(() => {
+        setTime((prevTime) => prevTime + 1);
+      }, 1000);
+    } else if (!isActive && time !== 0) {
+      clearInterval(id);
+    }
     //clean-up function
     return () => {
-      clearInterval(ref.current);
+      clearInterval(id);
     };
-  }, []);
-
-  const startButtom = () => {
-    setHide(true);
-    if(currentState === "START"){
-        setCurrentState("START")
-    }
-    ref.current = setInterval(() => {
-      setTime((prev) => prev + 1000);
-    }, 1000);
-  };
+  }, [isActive, time]);
 
   const stopButton = () => {
-    setHide(false);
-    if(currentState === "STOP"){
-        setCurrentState("STOP")
-    }
-    clearInterval(ref.current);
+    setIsActive(!isActive);
   };
 
   const resetButton = () => {
-    if(currentState === "RESET") return
+    setIsActive(false);
     setTime(0);
   };
-  
+
+  const formatTime = (timeInSeconds) => {
+    let minutes = Math.floor(timeInSeconds / 60);
+    let seconds = timeInSeconds % 60;
+
+    let formattedMinutes = String(minutes).padStart(1, "0");
+    let formattedSeconds = String(seconds).padStart(2, "0");
+    return `${formattedMinutes}:${formattedSeconds}`;
+  };
+
   return (
     <div>
-      <h2>Stop Watch</h2>
-
-      <h3>
-        Time:<span>{minutes}</span>:<span>{seconds}</span>
-      </h3>
-      {hide ? (
-        <button onClick={stopButton} style={{ backgroundColor: "#fdc57b" }}>
-          Stop
-        </button>
-      ) : (
-        <button onClick={startButtom} style={{ backgroundColor: "#ffd3b6" }}>
-          Start
-        </button>
-      )}
+      <h2>StopWatch</h2>
+      <h3>Time: {formatTime(time)}</h3>
+      <button onClick={stopButton}>{isActive ? "Stop" : "Start"}</button>
       <button onClick={resetButton} style={{ backgroundColor: "#7fa99b" }}>
         Reset
       </button>
