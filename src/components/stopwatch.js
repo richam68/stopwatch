@@ -39,7 +39,7 @@ function Stopwatch() {
 
   return (
     <div>
-      <h2>StopWatch</h2>
+      <h2>Stopwatch</h2>
       <h3>Time: {formatTime(time)}</h3>
       <button onClick={stopButton}>{isActive ? "Stop" : "Start"}</button>
       <button onClick={resetButton} style={{ backgroundColor: "#7fa99b" }}>
